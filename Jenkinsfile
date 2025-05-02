@@ -1,78 +1,44 @@
-pipeline {
-
-    agent any
-    environment {
-        IMAGE_NAME = 'myapp-image'
-        CONTAINER_NAME = 'myapp'
-        REPO_URL = 'https://github.com/JovickT/projet-Devops.git'
+pipeline{
+  agent any
+  environment{
+    IMG_NAME = 'myapp-image'
+    DOCKER_REPO = 'myapp'
+  }
+  
+  stages{
+    stage('clean up'){
+      steps{
+        deleteDir()
+      }
     }
 
-    stages {
-
-        stage('Checkout') {
-
-            steps {
-
-                echo REPO_URL
-
-                checkout scm
-
-            }
-
+    stage('Checkout SCM'){
+      steps{
+        git (
+          branch: 'master',
+          url: 'https://github.com/JovickT/projet-Devops.git'
+        )
+      }
+    }
+    stage('Build'){
+      steps{
+        script {
+          sh "docker build -t ${IMG_NAME} ."
+          sh "docker tag ${IMG_NAME} ${DOCKER_REPO}:${IMG_NAME}"
         }
-
-        stage ('Cloner le depôt GitHub'){
-            steps {
-                git url: "${REPO_URL}", branch: 'master'
-            }
-            
-        }
-
-         stage ('Nettoyer Docker'){
-            steps {
-                 script {
-                    sh """
-                        docker rm -f  ${CONTAINER_NAME}} || true
-                        docker rmi -f  ${IMAGE_NAME}} || true
-                    """
-                }
-            }
-            
-        }
-
-         stage ('Déployer le conteneur'){
-            steps {
-                 script {
-                    sh """
-                        docker run -d --name ${CONTAINER_NAME} -p 8088:80 ${IMAGE_NAME}
-                        docker exec ${CONTAINER_NAME} ifconfig
-        }
-                    """
-                }
-            }
-            
-        }
-
-        stage ("Construire l'image Docker"){
-            steps {
-                script {
-                    docker.build("${IMAGE_NAME}", ".")
-                }
-            }
-            
-        }
-        
-
-        stage('Lister les fichiers') {
-
-            steps {
-
-                sh 'ls -l'
-
-            }
-
-        }
-
+      }
     }
 
+    stage('deploiement conteneur'){
+      steps{
+        script {
+          sh "docker stop monapp || true"
+          sh "docker rm monapp || true"
+          sh "docker run -d --name monapp --hostname monapp -p 8599:80 ${IMG_NAME}"
+          sh 'docker exec monapp "ifconfig"'
+        }
+      }
+    }
+
+  }
 }
