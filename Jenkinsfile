@@ -8,7 +8,7 @@ pipeline {
 
             steps {
 
-                echo 'Récupération du dépôt Git...'
+                echo 'https://github.com/JovickT/projet-Devops.git'
 
                 checkout scm
 
