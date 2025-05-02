@@ -34,7 +34,7 @@ pipeline{
         script {
           sh "docker stop monapp || true"
           sh "docker rm monapp || true"
-          sh "docker run -d --name monapp --hostname monapp -p 8599:80 ${IMG_NAME}"
+          sh "docker run -d --name monapp --hostname myapp -p 8599:80 ${IMG_NAME}"
           sh 'docker exec monapp "ifconfig"'
         }
       }
