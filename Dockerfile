@@ -1,2 +1,5 @@
 FROM nginx
-COPY . /usr/share/nginx/html
+RUN apt-get update && \
+    apt-get install -y net-tools iproute2 iputils-ping &&\
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY ./html /usr/share/nginx/html
