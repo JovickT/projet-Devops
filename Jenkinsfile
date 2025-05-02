@@ -1,7 +1,7 @@
 pipeline {
 
     agent any
-    environnement {
+    environment {
         IMAGE_NAME = 'myapp-image'
         REPO_URL = 'https://github.com/JovickT/projet-Devops.git'
     }
