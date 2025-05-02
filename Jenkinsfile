@@ -1,6 +1,10 @@
 pipeline {
 
     agent any
+    environnement {
+        IMAGE_NAME = 'myapp-image'
+        REPO_URL = ''
+    }
 
     stages {
 
